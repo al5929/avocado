@@ -55,9 +55,6 @@ class TestLogsUI(JobPre, JobPost):
         if job.config.get('stdout_claimed_by') is not None:
             return
 
-        if job.config.get('stdout_claimed_by') is not None:
-            return
-
         try:
             with open(os.path.join(job.logdir, 'results.json'),
                       encoding='utf-8') as json_file:
