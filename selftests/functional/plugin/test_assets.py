@@ -54,13 +54,11 @@ class AssetsFetchSuccess(TestCaseTmpDir):
         Setup configuration file and folders
         """
         warnings.simplefilter("ignore", ResourceWarning)
-        self.base_dir, self.mapping, self.config_file = get_temporary_config(
-            self)
+        self.base_dir, self.mapping, self.config_file = get_temporary_config(self)
         asset_dir = os.path.join(self.mapping['cache_dir'], 'by_location',
                                  'a784600d3e01b346e8813bbd065d00048be8a482')
         os.makedirs(asset_dir)
-        open(os.path.join(asset_dir, 'hello-2.9.tar.gz'),
-            "w", encoding='utf-8').close()
+        open(os.path.join(asset_dir, 'hello-2.9.tar.gz'), "w", encoding='utf-8').close()
 
     def test_asset_fetch_success(self):
         """
@@ -73,19 +71,16 @@ class AssetsFetchSuccess(TestCaseTmpDir):
             locations='https://mirrors.kernel.org/gnu/hello/hello-2.9.tar.gz')
         """
         test_content = TEST_TEMPLATE.format(content=fetch_content)
-        test_file = tempfile.NamedTemporaryFile(suffix=".py",
-            dir=self.base_dir.name, delete=False)
+        test_file = tempfile.NamedTemporaryFile(suffix=".py", dir=self.base_dir.name, delete=False)
         test_file.write(test_content.encode())
         test_file.close()
 
-        expected_output = "Fetching assets from %s.\n" \
-            "  File hello-2.9.tar.gz fetched or already on cache.\n" \
-            % test_file.name
+        expected_output = (f"Fetching assets from {test_file.name}.\n"
+                           f"  File hello-2.9.tar.gz fetched or already on cache.\n")
         expected_rc = exit_codes.AVOCADO_ALL_OK
 
-        cmd_line = "%s --config %s assets fetch %s " % (AVOCADO,
-                                                        self.config_file.name,
-                                                        test_file.name)
+        cmd_line = (f"{AVOCADO} --config {self.config_file.name} "
+                    f"assets fetch {test_file.name} ")
         result = process.run(cmd_line)
         os.remove(test_file.name)
 
@@ -96,9 +91,7 @@ class AssetsFetchSuccess(TestCaseTmpDir):
         """Test register command failure."""
         url = "https://urlnotfound"
         config = self.config_file.name
-        cmd_line = "%s --config %s assets register foo %s" % (AVOCADO,
-                                                              config,
-                                                              url)
+        cmd_line = f"{AVOCADO} --config {config} assets register foo {url}"
         result = process.run(cmd_line, ignore_status=True)
 
         self.assertEqual(result.exit_status, exit_codes.AVOCADO_FAIL)
@@ -110,9 +103,7 @@ class AssetsFetchSuccess(TestCaseTmpDir):
         """Test register command success."""
         url = "/etc/hosts"
         config = self.config_file.name
-        cmd_line = "%s --config %s assets register hosts %s" % (AVOCADO,
-                                                                config,
-                                                                url)
+        cmd_line = f"{AVOCADO} --config {config} assets register hosts {url}"
         result = process.run(cmd_line)
 
         self.assertIn("Now you can reference it by name hosts",
@@ -121,27 +112,22 @@ class AssetsFetchSuccess(TestCaseTmpDir):
     def test_asset_purge(self):
         """Make sure that we can remove a asset from cache."""
         # creates a single byte asset
-        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name,
-            delete=False)
+        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name, delete=False)
         asset_file.write(b'\xff')
         asset_file.close()
 
         config = self.config_file.name
         url = asset_file.name
         name = "should-be-removed"
-        cmd_line = "%s --config %s assets register %s %s" % (AVOCADO,
-                                                             config,
-                                                             name,
-                                                             url)
+        cmd_line = f"{AVOCADO} --config {config} assets register {name} {url}"
         result = process.run(cmd_line)
-        self.assertIn("Now you can reference it by name {}".format(name),
+        self.assertIn(f"Now you can reference it by name {name}",
                       result.stdout_text)
 
-        cmd_line = "%s --config %s assets purge --by-size-filter '==1'"% (
-            AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets purge --by-size-filter '==1'"
         process.run(cmd_line)
 
-        cmd_line = "%s --config %s assets list" % (AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets list"
         result = process.run(cmd_line)
         self.assertNotIn(name, result.stdout_text)
 
@@ -151,42 +137,33 @@ class AssetsFetchSuccess(TestCaseTmpDir):
         url = "/etc/hosts"
         config = self.config_file.name
         name = "should-be-part-of-list"
-        cmd_line = "%s --config %s assets register %s %s" % (AVOCADO,
-                                                             config,
-                                                             name,
-                                                             url)
+        cmd_line = f"{AVOCADO} --config {config} assets register {name} {url}"
         result = process.run(cmd_line)
-        self.assertIn("Now you can reference it by name {}".format(name),
+        self.assertIn(f"Now you can reference it by name {name}",
                       result.stdout_text)
-        cmd_line = "%s --config %s assets list" % (AVOCADO,
-                                                   config)
+        cmd_line = f"{AVOCADO} --config {config} assets list"
         result = process.run(cmd_line)
         self.assertIn(name, result.stdout_text)
 
     def test_asset_purge_by_overall_cache_size(self):
         """Make sure that we can set cache limits."""
         # creates a single byte asset
-        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name,
-            delete=False)
+        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name, delete=False)
         asset_file.write(b'\xff')
         asset_file.close()
 
         config = self.config_file.name
         url = asset_file.name
         name = "should-be-removed"
-        cmd_line = "%s --config %s assets register %s %s" % (AVOCADO,
-                                                             config,
-                                                             name,
-                                                             url)
+        cmd_line = f"{AVOCADO} --config {config} assets register {name} {url}"
         result = process.run(cmd_line)
-        self.assertIn("Now you can reference it by name {}".format(name),
+        self.assertIn(f"Now you can reference it by name {name}",
                       result.stdout_text)
 
-        cmd_line = "%s --config %s assets purge --by-overall-limit 2" % (
-            AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets purge --by-overall-limit 2"
         process.run(cmd_line)
 
-        cmd_line = "%s --config %s assets list" % (AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets list"
         result = process.run(cmd_line)
         self.assertIn(name, result.stdout_text)
 
@@ -210,8 +187,7 @@ class AssetsPlugin(unittest.TestCase):
         Setup configuration file and folders
         """
         warnings.simplefilter("ignore", ResourceWarning)
-        self.base_dir, self.mapping, self.config_file = get_temporary_config(
-            self)
+        self.base_dir, self.mapping, self.config_file = get_temporary_config(self)
 
     def test_asset_fetch(self):
         """
@@ -222,8 +198,7 @@ class AssetsPlugin(unittest.TestCase):
             " arguments are required: AVOCADO_INSTRUMENTED\n"
         expected_rc = exit_codes.AVOCADO_FAIL
 
-        cmd_line = "%s --config %s assets fetch" % (AVOCADO,
-                                                    self.config_file.name)
+        cmd_line = f"{AVOCADO} --config {self.config_file.name} assets fetch"
         result = process.run(cmd_line, ignore_status=True)
 
         self.assertEqual(expected_rc, result.exit_status)
@@ -240,17 +215,14 @@ class AssetsPlugin(unittest.TestCase):
             locations='https://mirrors.kernel.org/gnu/hello/hello-2.9.tar.gz')
         """
         test_content = NOT_TEST_TEMPLATE.format(content=fetch_content)
-        test_file = tempfile.NamedTemporaryFile(suffix=".py",
-            dir=self.base_dir.name, delete=False)
+        test_file = tempfile.NamedTemporaryFile(suffix=".py", dir=self.base_dir.name, delete=False)
         test_file.write(test_content.encode())
         test_file.close()
 
-        expected_stdout = "Fetching assets from %s.\n" % test_file.name
+        expected_stdout = f"Fetching assets from {test_file.name}.\n"
         expected_rc = exit_codes.AVOCADO_ALL_OK
 
-        cmd_line = "%s --config %s assets fetch %s " % (AVOCADO,
-                                                        self.config_file.name,
-                                                        test_file.name)
+        cmd_line = f"{AVOCADO} --config {self.config_file.name} assets fetch {test_file.name} "
         result = process.run(cmd_line, ignore_status=True)
         os.remove(test_file.name)
 
@@ -268,18 +240,14 @@ class AssetsPlugin(unittest.TestCase):
             locations='https://mirrors.kernel.org/gnu/hello/hello-2.9.tar.gz')
         """
         test_content = TEST_TEMPLATE.format(content=fetch_content)
-        test_file = tempfile.NamedTemporaryFile(suffix=".c",
-            dir=self.base_dir.name, delete=False)
+        test_file = tempfile.NamedTemporaryFile(suffix=".c",  dir=self.base_dir.name, delete=False)
         test_file.write(test_content.encode())
         test_file.close()
 
-        expected_stderr = "No such file or file not supported: %s\n" \
-            % test_file.name
+        expected_stderr = f"No such file or file not supported: {test_file.name}\n"
         expected_rc = exit_codes.AVOCADO_FAIL
 
-        cmd_line = "%s --config %s assets fetch %s " % (AVOCADO,
-                                                        self.config_file.name,
-                                                        test_file.name)
+        cmd_line = f"{AVOCADO} --config {self.config_file.name} assets fetch {test_file.name} "
         result = process.run(cmd_line, ignore_status=True)
         os.remove(test_file.name)
 
@@ -297,17 +265,14 @@ class AssetsPlugin(unittest.TestCase):
             locations='http://localhost/hello-2.9.tar.gz')
         """
         test_content = TEST_TEMPLATE.format(content=fetch_content)
-        test_file = tempfile.NamedTemporaryFile(suffix=".py",
-            dir=self.base_dir.name, delete=False)
+        test_file = tempfile.NamedTemporaryFile(suffix=".py", dir=self.base_dir.name, delete=False)
         test_file.write(test_content.encode())
         test_file.close()
 
         expected_stderr = "Failed to fetch hello-2.9.tar.gz"
         expected_rc = exit_codes.AVOCADO_FAIL
 
-        cmd_line = "%s --config %s assets fetch %s " % (AVOCADO,
-                                                        self.config_file.name,
-                                                        test_file.name)
+        cmd_line = f"{AVOCADO} --config {self.config_file.name} assets fetch {test_file.name} "
         result = process.run(cmd_line, ignore_status=True)
         os.remove(test_file.name)
 
@@ -325,18 +290,15 @@ class AssetsPlugin(unittest.TestCase):
             locations='http://localhost/hello-2.9.tar.gz')
         """
         test_content = TEST_TEMPLATE.format(content=fetch_content)
-        test_file = tempfile.NamedTemporaryFile(suffix=".py",
-            dir=self.base_dir.name, delete=False)
+        test_file = tempfile.NamedTemporaryFile(suffix=".py", dir=self.base_dir.name, delete=False)
         test_file.write(test_content.encode())
         test_file.close()
 
         expected_stderr = "Failed to fetch hello-2.9.tar.gz"
         expected_rc = exit_codes.AVOCADO_ALL_OK
 
-        cmd_line = "%s --config %s assets fetch --ignore-errors %s " % (
-            AVOCADO,
-            self.config_file.name,
-            test_file.name)
+        cmd_line = (f"{AVOCADO} --config {self.config_file.name} "
+                    f"assets fetch --ignore-errors {test_file.name} ")
         result = process.run(cmd_line, ignore_status=True)
         os.remove(test_file.name)
 
@@ -346,31 +308,26 @@ class AssetsPlugin(unittest.TestCase):
     def test_asset_purge_by_days(self):
         """Make sure that we can remove assets by days."""
         # creates a single byte asset
-        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name,
-            delete=False)
+        asset_file = tempfile.NamedTemporaryFile(dir=self.base_dir.name, delete=False)
         asset_file.write(b'\xff')
         asset_file.close()
 
         config = self.config_file.name
         url = asset_file.name
         name = "should-be-removed"
-        cmd_line = "%s --config %s assets register %s %s" % (AVOCADO,
-                                                             config,
-                                                             name,
-                                                             url)
+        cmd_line = f"{AVOCADO} --config {config} assets register {name} {url}"
         result = process.run(cmd_line)
-        self.assertIn("Now you can reference it by name {}".format(name),
+        self.assertIn(f"Now you can reference it by name {name}",
                       result.stdout_text)
 
-        cmd_line = "%s --config %s assets list" % (AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets list"
         result = process.run(cmd_line)
         self.assertIn(name, result.stdout_text)
 
-        cmd_line = "%s --config %s assets purge --by-days 0" % (AVOCADO,
-                                                                config)
+        cmd_line = f"{AVOCADO} --config {config} assets purge --by-days 0"
         process.run(cmd_line)
 
-        cmd_line = "%s --config %s assets list" % (AVOCADO, config)
+        cmd_line = f"{AVOCADO} --config {config} assets list"
         result = process.run(cmd_line)
         self.assertNotIn(name, result.stdout_text)
 

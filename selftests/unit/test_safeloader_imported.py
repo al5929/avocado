@@ -7,23 +7,19 @@ from avocado.core.safeloader.imported import ImportedSymbol
 class ModulePathComponents(unittest.TestCase):
 
     def test_single(self):
-        self.assertEqual(ImportedSymbol._split_last_module_path_component(
-                         'os'),
+        self.assertEqual(ImportedSymbol._split_last_module_path_component('os'),
                          ('', 'os'))
 
     def test_compound(self):
-        self.assertEqual(ImportedSymbol._split_last_module_path_component(
-                         'os.path'),
+        self.assertEqual(ImportedSymbol._split_last_module_path_component('os.path'),
                          ('os', 'path'))
 
     def test_relative_simple(self):
-        self.assertEqual(ImportedSymbol._split_last_module_path_component(
-                         '..utils'),
+        self.assertEqual(ImportedSymbol._split_last_module_path_component('..utils'),
                          ('', 'utils'))
 
     def test_relative_compound(self):
-        res = ImportedSymbol._split_last_module_path_component(
-                         '...a.b.c.d')
+        res = ImportedSymbol._split_last_module_path_component('...a.b.c.d')
         self.assertEqual(res, ('a.b.c', 'd'))
 
 
@@ -55,8 +51,7 @@ class SymbolAndModulePathCommon(unittest.TestCase):
         msg = f'Expected symbol name "{input_symbol}", found "{symbol}"'
         self.assertEqual(symbol, input_symbol, msg)
         module_path = ImportedSymbol.get_module_path_from_statement(statement)
-        msg = (f'Expected module path "{input_module_path}", '
-               f'found "{module_path}"')
+        msg = f'Expected module path "{input_module_path}", found "{module_path}"'
         self.assertEqual(module_path, input_module_path, msg)
         imported_symbol = ImportedSymbol(module_path, symbol)
         self.assertEqual(imported_symbol,

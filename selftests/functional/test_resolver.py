@@ -25,7 +25,7 @@ class ResolverFunctional(unittest.TestCase):
         name = 'executable-test'
         with script.TemporaryScript(name, EXEC_TEST,
                                     name, self.MODE_0775) as test_file:
-            cmd_line = ('%s --verbose list %s' % (AVOCADO, test_file.path))
+            cmd_line = f'{AVOCADO} --verbose list {test_file.path}'
             result = process.run(cmd_line)
         self.assertIn('exec-test: 1', result.stdout_text)
 
@@ -33,7 +33,7 @@ class ResolverFunctional(unittest.TestCase):
         name = 'executable-test'
         with script.TemporaryScript(name, EXEC_TEST,
                                     name, self.MODE_0664) as test_file:
-            cmd_line = ('%s list %s' % (AVOCADO, test_file.path))
+            cmd_line = f'{AVOCADO} list {test_file.path}'
             result = process.run(cmd_line)
         self.assertNotIn('exec-test ', result.stdout_text)
 
@@ -41,14 +41,14 @@ class ResolverFunctional(unittest.TestCase):
         name = 'passtest.py'
         with script.TemporaryScript(name, AVOCADO_INSTRUMENTED_TEST,
                                     name, self.MODE_0664) as test_file:
-            cmd_line = ('%s --verbose list %s' % (AVOCADO, test_file.path))
+            cmd_line = f'{AVOCADO} --verbose list {test_file.path}'
             result = process.run(cmd_line)
         self.assertIn('passtest.py:PassTest.test', result.stdout_text)
         self.assertIn('avocado-instrumented: 1', result.stdout_text)
 
     def test_property(self):
         test_path = os.path.join(BASEDIR, 'examples', 'tests', 'property.py')
-        cmd_line = ('%s --verbose list %s' % (AVOCADO, test_path))
+        cmd_line = f'{AVOCADO} --verbose list {test_path}'
         result = process.run(cmd_line)
         self.assertIn('examples/tests/property.py:Property.test',
                       result.stdout_text)
@@ -62,11 +62,8 @@ class ResolverFunctional(unittest.TestCase):
         """
         config = "[plugins.resolver]\norder = ['python-unittest',]\n"
         with script.TemporaryScript('config', config) as config_path:
-            test_path = os.path.join(BASEDIR, 'examples', 'tests',
-                'passtest.py')
-            cmd_line = ('%s --config %s --verbose list %s' % (AVOCADO,
-                                                              config_path.path,
-                                                              test_path))
+            test_path = os.path.join(BASEDIR, 'examples', 'tests', 'passtest.py')
+            cmd_line = f'{AVOCADO} --config {config_path.path} --verbose list {test_path}'
             result = process.run(cmd_line)
         self.assertIn('python-unittest: 1', result.stdout_text)
 
@@ -79,28 +76,22 @@ class ResolverFunctional(unittest.TestCase):
         config = ("[plugins]\ndisable = ['resolver.python-unittest', "
                   "'resolver.avocado-instrumented']\n")
         with script.TemporaryScript('config', config) as config_path:
-            test_path = os.path.join(BASEDIR, 'examples', 'tests',
-                'passtest.py')
-            cmd_line = ('%s --config %s --verbose list %s' % (AVOCADO,
-                                                              config_path.path,
-                                                              test_path))
+            test_path = os.path.join(BASEDIR, 'examples', 'tests', 'passtest.py')
+            cmd_line = f'{AVOCADO} --config {config_path.path} --verbose list {test_path}'
             result = process.run(cmd_line)
         lines = result.stdout_text.splitlines()
         self.assertEqual(lines[-2], "TEST TYPES SUMMARY")
         self.assertEqual(lines[-1], "==================")
 
     def test_recursive_by_default(self):
-        test_path = os.path.join(BASEDIR, 'examples', 'tests',
-            'skip_conditional.py')
-        cmd_line = ('%s --verbose list %s' % (AVOCADO, test_path))
+        test_path = os.path.join(BASEDIR, 'examples', 'tests', 'skip_conditional.py')
+        cmd_line = f'{AVOCADO} --verbose list {test_path}'
         result = process.run(cmd_line)
         lines = result.stdout_text.splitlines()
         # two random tests that should be among the 10 tests found
-        self.assertIn('examples/tests/skip_conditional.py:BareMetal'
-                      '.test_specific',
+        self.assertIn('examples/tests/skip_conditional.py:BareMetal.test_specific',
                       lines[1])
-        self.assertIn('examples/tests/skip_conditional.py:NonBareMetal'
-                      '.test_bare_metal',
+        self.assertIn('examples/tests/skip_conditional.py:NonBareMetal.test_bare_metal',
                       lines[7])
         self.assertEqual('avocado-instrumented: 10', lines[-1])
 

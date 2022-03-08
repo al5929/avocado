@@ -162,8 +162,7 @@ class ListTestFunctional(TestCaseTmpDir):
                 os.killpg(os.getpgid(test_process.pid), signal.SIGKILL)
                 self.fail(f"Failed to run test under {timeout} seconds")
             time.sleep(0.05)
-        self.assertEqual(test_process.returncode,
-            exit_codes.AVOCADO_TESTS_FAIL)
+        self.assertEqual(test_process.returncode, exit_codes.AVOCADO_TESTS_FAIL)
 
     def test_simple(self):
         self._test('simpletest.sh', SIMPLE_TEST, 'exec-test', self.MODE_0775)
@@ -176,8 +175,7 @@ class ListTestFunctional(TestCaseTmpDir):
         cmd_line = f"{AVOCADO} --verbose list -t fast -- {examples_dir}"
         result = process.run(cmd_line)
         self.assertEqual(result.exit_status, exit_codes.AVOCADO_ALL_OK,
-                         (f"Avocado did not return rc "
-                          f"{exit_codes.AVOCADO_ALL_OK}:\n{result}"))
+                         f"Avocado did not return rc {exit_codes.AVOCADO_ALL_OK}:\n{result}")
         stdout_lines = result.stdout_text.splitlines()
         self.assertIn("TEST TYPES SUMMARY", stdout_lines)
         self.assertIn("avocado-instrumented: 2", stdout_lines)
@@ -213,8 +211,7 @@ class ListTestFunctional(TestCaseTmpDir):
                    'avocado-instrumented', self.MODE_0664, 2)
 
     def test_multiple_methods_same_name(self):
-        self._test('multiplemethods.py',
-                    AVOCADO_TEST_MULTIPLE_METHODS_SAME_NAME,
+        self._test('multiplemethods.py', AVOCADO_TEST_MULTIPLE_METHODS_SAME_NAME,
                    'avocado-instrumented', self.MODE_0664, 1)
 
     def test_load_not_a_test(self):
@@ -279,19 +276,17 @@ class ListTestFunctional(TestCaseTmpDir):
             for exp in exps:
                 if exp[0] in test["id"]:
                     self.assertEqual(test["status"], exp[1],
-                                     (f"Status of {exp} not as expected: "
-                                      f"{result}"))
+                                     f"Status of {exp} not as expected: {result}")
                     exps.remove(exp)
                     if exp[2] is not None:
                         self.assertEqual(test["fail_reason"], exp[2],
-                                         (f'Fail reason "{exp}" not as '
-                                          f'expected: {result}'))
+                                         f'Fail reason "{exp}" not as expected: {result}')
                     break
             else:
                 self.fail(f"No expected result for {test['id']}\n"
                           f"{result}\n\nexps = {exps}")
-        self.assertFalse(exps, (f"Some expected result not matched to actual "
-                                f"results:\n{result}\n\nexps = {exps}"))
+        self.assertFalse(exps, (f"Some expected result not matched to actualresults:\n"
+                                f"{result}\n\nexps = {exps}"))
 
     def test_list_subtests_filter(self):
         """Check whether the subtests filter works for INSTRUMENTED tests."""

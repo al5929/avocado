@@ -116,7 +116,7 @@ class JobAPIFeaturesTest(Test):
 
         # Asserts
         self.check_exit_code(result)
-        archive_path = '%s.zip' % logdir
+        archive_path = f'{logdir}.zip'
         self.check_file_exists(archive_path)
 
     def test_check_category_directory_exists(self):
@@ -226,8 +226,7 @@ The list of test availables for --skip and --select are:
     group.add_argument('--dict-tests',
                        default={}, help=argparse.SUPPRESS)
     parser.add_argument('--disable-plugin-checks',
-                        help='Disable checks for one or more plugins '
-                        '(by directory name), separated by comma',
+                        help='Disable checks for one or more plugins (by directory name), separated by comma',
                         action='append', default=[])
 
     arg = parser.parse_args()
@@ -238,8 +237,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     suites = []
 
     def get_ref(method_short_name):
-        return ['%s:JobAPIFeaturesTest.test_%s' %
-        (__file__, method_short_name)]
+        return [f'{__file__}:JobAPIFeaturesTest.test_{method_short_name}']
 
     # ========================================================================
     # Test if the archive file was created
@@ -255,7 +253,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     }
 
     suites.append(TestSuite.from_config(config_check_archive_file_exists,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test if the category directory was created
@@ -271,7 +269,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     }
 
     suites.append(TestSuite.from_config(config_check_category_directory_exists,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test if a directory was created
@@ -293,7 +291,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     }
 
     suites.append(TestSuite.from_config(config_check_directory_exists,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test the content of a file
@@ -374,7 +372,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     }
 
     suites.append(TestSuite.from_config(config_check_file_content,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test if the result file was created
@@ -452,7 +450,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
              'assert': False})
 
     suites.append(TestSuite.from_config(config_check_file_exists,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test if a file was created
@@ -485,7 +483,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
              'assert': True})
 
     suites.append(TestSuite.from_config(config_check_output_file,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
 
     # ========================================================================
     # Test if the temporary directory was created
@@ -501,7 +499,7 @@ def create_suite_job_api(args):  # pylint: disable=W0621
     }
 
     suites.append(TestSuite.from_config(config_check_tmp_directory_exists,
-                                        "job-api-%s" % (len(suites) + 1)))
+                                        f"job-api-{len(suites) + 1}"))
     return suites
 
 
@@ -511,8 +509,7 @@ def create_suites(args):  # pylint: disable=W0621
     # Run nrunner interface checks for all available runners
     # ========================================================================
     config_nrunner_interface = {
-        'resolver.references': [
-            'selftests/functional/test_nrunner_interface.py'],
+        'resolver.references': ['selftests/functional/test_nrunner_interface.py'],
         'run.dict_variants.variant_id_keys': ['runner'],
         'run.dict_variants': [
             {'runner': 'avocado-runner',
@@ -560,8 +557,7 @@ def create_suites(args):  # pylint: disable=W0621
             'runnable-run-uri-only-exit-code': 0})
 
     if args.dict_tests['nrunner-interface']:
-        suites.append(TestSuite.from_config(config_nrunner_interface,
-            "nrunner-interface"))
+        suites.append(TestSuite.from_config(config_nrunner_interface, "nrunner-interface"))
 
     # ========================================================================
     # Run all static checks, unit and functional tests
@@ -592,16 +588,14 @@ def create_suites(args):  # pylint: disable=W0621
                                             "functional-parallel"))
 
         config_check_functional_serial = copy.copy(config_check)
-        config_check_functional_serial['resolver.references'] = [
-            'selftests/functional/serial/']
+        config_check_functional_serial['resolver.references'] = ['selftests/functional/serial/']
         config_check_functional_serial['nrunner.max_parallel_tasks'] = 1
         suites.append(TestSuite.from_config(config_check_functional_serial,
                                             "functional-serial"))
 
     if args.dict_tests['static-checks']:
         config_check_static = copy.copy(config_check)
-        config_check_static['resolver.references'] = glob.glob(
-            'selftests/*.sh')
+        config_check_static['resolver.references'] = glob.glob('selftests/*.sh')
         suites.append(TestSuite.from_config(config_check_static,
                                             "static-checks"))
 
@@ -611,9 +605,8 @@ def create_suites(args):  # pylint: disable=W0621
         for optional_plugin in glob.glob('optional_plugins/*'):
             plugin_name = os.path.basename(optional_plugin)
             if plugin_name not in args.disable_plugin_checks:
-                pattern = '%s/tests/*' % optional_plugin
-                config_check_optional['resolver.references'] += glob.glob(
-                    pattern)
+                pattern = f'{optional_plugin}/tests/*'
+                config_check_optional['resolver.references'] += glob.glob(pattern)
 
         suites.append(TestSuite.from_config(config_check_optional,
                                             "optional-plugins"))
@@ -652,12 +645,11 @@ def main(args):  # pylint: disable=W0621
                     features.append(variants['namespace'])
 
         unique_features = sorted(set(features))
-        print('Features covered (%i):' % len(unique_features))
+        print(f'Features covered ({len(unique_features)}):')
         print('\n'.join(unique_features))
         exit(0)
 
-    # Will only run the test you select
-    # --select must be followed by list of tests
+    # Will only run the test you select, --select must be followed by list of tests
     elif args.select:
         for elem in args.select:
             if elem not in args.dict_tests.keys():
@@ -666,11 +658,9 @@ def main(args):  # pylint: disable=W0621
             else:
                 args.dict_tests[elem] = True
 
-    # Will run all the tests except these you skip,
-    # --skip must be followed by list of tests
+    # Will run all the tests except these you skip, --skip must be followed by list of tests
     elif args.skip:
-        # Make all the values True, so later we set to False
-        # the tests we don't want to run
+        # Make all the values True, so later we set to False the tests we don't want to run
         args.dict_tests = {x: True for x in args.dict_tests}
 
         for elem in args.skip:
@@ -700,8 +690,7 @@ def main(args):  # pylint: disable=W0621
     config = {'run.job_category': 'avocado-selftests',
               'job.output.testlogs.statuses': ['FAIL', 'ERROR', 'INTERRUPT']}
 
-    # Workaround for travis problem on arm64
-    # https://github.com/avocado-framework/avocado/issues/4768
+    # Workaround for travis problem on arm64 - https://github.com/avocado-framework/avocado/issues/4768
     if (platform.machine() == 'aarch64'):
         max_parallel = int(multiprocessing.cpu_count()/2)
         for suite in suites:
