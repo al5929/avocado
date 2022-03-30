@@ -14,7 +14,8 @@ class PythonModule:
     be used for, say, Python unittests.
     """
     __slots__ = ('path', 'klass_imports', 'mod_imports', 'mod',
-                 'module', 'klass', 'imported_symbols', 'interesting_klass_found')
+                 'module', 'klass', 'imported_symbols',
+                 'interesting_klass_found')
 
     def __init__(self, path, module='avocado', klass='Test'):
         """
@@ -89,7 +90,7 @@ class PythonModule:
         """Returns the imported path, from absolute or relative import."""
         abs_path_of_module_dir = os.path.abspath(os.path.dirname(self.path))
         imported_path = self._get_adjusted_path_for_level(statement,
-                                                          abs_path_of_module_dir)
+                                                        abs_path_of_module_dir)
         if getattr(statement, 'module', None) is not None:
             # Module has a name, so its path is absolute, and not relative
             # to the directory structure
@@ -104,8 +105,8 @@ class PythonModule:
         for index, name in enumerate(statement.names):
             final_name = self._get_name_from_alias_statement(name)
             imported_symbol = ImportedSymbol.from_statement(statement,
-                                                            os.path.abspath(self.path),
-                                                            index)
+                                                            os.path.abspath(
+                                                            self.path), index)
             self.imported_symbols[final_name] = imported_symbol
 
     @staticmethod

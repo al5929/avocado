@@ -63,7 +63,8 @@ class Human(ResultEvents):
         LOG_UI.info("JOB ID     : %s", job.unique_id)
         # TODO: this is part of the legacy implementation of the
         # replay plugin and should be removed soon.
-        replay_enabled = replay_source_job = job.config.get("replay_sourcejob", False)
+        replay_enabled = replay_source_job = job.config.get(
+            "replay_sourcejob", False)
         # The "avocado replay" plugin sets a different namespace
         if not replay_source_job:
             replay_enabled = job.config.get("job.replay.enabled")
@@ -96,12 +97,13 @@ class Human(ResultEvents):
             color = output.TERM_SUPPORT.PARTIAL
         if self.runner == 'runner':
             LOG_UI.debug('%s%s%s', color, self.__throbber.render(),
-                         output.TERM_SUPPORT.ENDC, extra={"skip_newline": True})
+                        output.TERM_SUPPORT.ENDC, extra={"skip_newline": True})
 
     @staticmethod
     def get_colored_status(status, extra=None):
-        out = (output.TERM_SUPPORT.MOVE_BACK + output.TEST_STATUS_MAPPING[status] +
-               status)
+        out = (
+            output.TERM_SUPPORT.MOVE_BACK +
+            output.TEST_STATUS_MAPPING[status] + status)
         if extra:
             if len(extra) > 255:
                 extra = extra[:255] + '...'
@@ -143,11 +145,12 @@ class Human(ResultEvents):
             LOG_UI.info(job.interrupted_reason)
 
         if job.status == 'PASS':
-            LOG_UI.info("RESULTS    : PASS %d | ERROR %d | FAIL %d | SKIP %d | "
-                        "WARN %d | INTERRUPT %s | CANCEL %s", job.result.passed,
-                        job.result.errors, job.result.failed, job.result.skipped,
-                        job.result.warned, job.result.interrupted,
-                        job.result.cancelled)
+            LOG_UI.info(
+                "RESULTS    : PASS %d | ERROR %d | FAIL %d | SKIP %d | "
+                "WARN %d | INTERRUPT %s | CANCEL %s", job.result.passed,
+                job.result.errors, job.result.failed, job.result.skipped,
+                job.result.warned, job.result.interrupted,
+                job.result.cancelled)
 
 
 class HumanJob(JobPre, JobPost):

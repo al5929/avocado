@@ -39,7 +39,8 @@ class BeakerResult(ResultEvents):
             return
         baseurl = baseurl.rstrip('/')
         self.beaker_url = baseurl + '/recipes/' + recipeid + '/tasks/' + taskid
-        LOG_UI.info("beaker: using API at %s (R:%s T:%s)", baseurl, recipeid, taskid)
+        LOG_UI.info("beaker: using API at %s (R:%s T:%s)", baseurl, recipeid,
+            taskid)
 
     def send_request(self, req):
         LOG_UI.debug('beaker: %s %s ...', req.method, req.full_url)
@@ -47,7 +48,8 @@ class BeakerResult(ResultEvents):
             res = urllib.request.urlopen(req)  # nosec
             return res
         except urllib.error.URLError as err:
-            LOG_UI.info('beaker: %s %s failed: %s', req.method, req.full_url, err)
+            LOG_UI.info('beaker: %s %s failed: %s', req.method, req.full_url,
+                err)
             return None
         except Exception as err:
             # should not happen

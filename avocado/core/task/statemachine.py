@@ -107,7 +107,8 @@ class TaskStateMachine:
                     LOG.debug('Task "%s" finished: %s',
                               runtime_task.task.identifier, status_reason)
                 else:
-                    LOG.debug('Task "%s" finished', runtime_task.task.identifier)
+                    LOG.debug('Task "%s" finished',
+                    runtime_task.task.identifier)
                 self.finished.append(runtime_task)
 
 
@@ -161,7 +162,7 @@ class Worker:
                             finished_rt_task.status == 'FAILED ON TRIAGE'):
 
                         await self._state_machine.finish_task(runtime_task,
-                                                              "FAILED ON TRIAGE")
+                                                            "FAILED ON TRIAGE")
                         return
                 # from here, this dependency `task` ran, so, let's check
                 # the its latest data in the status repo
@@ -287,7 +288,7 @@ class Worker:
         await self._state_machine.finish_task(runtime_task)
 
     async def run(self):
-        """Pushes Tasks forward and makes them do something with their lives."""
+        """Pushes Tasks forward and makes them do something with their lives"""
         while True:
             is_complete = await self._state_machine.complete
             if is_complete:

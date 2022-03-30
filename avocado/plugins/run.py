@@ -197,10 +197,10 @@ class Run(CLICmd):
         parser.output = parser.add_argument_group('output and result format')
 
         settings.add_argparser_to_option('job.run.store_logging_stream',
-                                         parser=parser.output,
-                                         long_arg='--store-logging-stream',
-                                         metavar='LOGGING_STREAM',
-                                         argparse_type=lambda x: set(x.split(',')))
+                                    parser=parser.output,
+                                    long_arg='--store-logging-stream',
+                                    metavar='LOGGING_STREAM',
+                                    argparse_type=lambda x: set(x.split(',')))
 
         help_msg = ('Logs the possible data directories for each test. This '
                     'is helpful when writing new tests and not being sure '
@@ -238,9 +238,10 @@ class Run(CLICmd):
         try:
             suite = TestSuite.from_config(config, name='')
             if suite.size == 0:
-                msg = ("Suite is empty. There is no tests to run. This usually "
-                       "happens when you pass --ignore-missing-references and "
-                       "there is no more references to process.")
+                msg = (
+                    "Suite is empty. There is no tests to run. This usually "
+                    "happens when you pass --ignore-missing-references and "
+                    "there is no more references to process.")
                 LOG_UI.warning(msg)
                 sys.exit(exit_codes.AVOCADO_FAIL)
         except TestSuiteError as err:

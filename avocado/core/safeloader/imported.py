@@ -88,7 +88,8 @@ class ImportedSymbol:
         modules_paths = sys.path
         modules_paths.insert(0, self.get_relative_module_fs_path())
         spec = None
-        for component, previous in self._walk_importable_components(symbol_is_module):
+        for component, previous in self._walk_importable_components(
+            symbol_is_module):
             if previous:
                 modules_paths = [os.path.join(mod, previous) for
                                  mod in modules_paths[:]]
@@ -144,11 +145,13 @@ class ImportedSymbol:
 
     @staticmethod
     def get_symbol_from_statement(statement):
-        return ImportedSymbol.get_symbol_module_path_from_statement(statement)[0]
+        return ImportedSymbol.get_symbol_module_path_from_statement(
+            statement)[0]
 
     @staticmethod
     def get_module_path_from_statement(statement):
-        return ImportedSymbol.get_symbol_module_path_from_statement(statement)[1]
+        return ImportedSymbol.get_symbol_module_path_from_statement(
+            statement)[1]
 
     @staticmethod
     def get_symbol_module_path_from_statement(statement, name_index=0):
@@ -202,8 +205,10 @@ class ImportedSymbol:
         (symbol,
          module_path,
          module_alias,
-         symbol_alias) = cls.get_symbol_module_path_from_statement(statement, index)
-        return cls(module_path, symbol, importer_fs_path, module_alias, symbol_alias)
+         symbol_alias) = cls.get_symbol_module_path_from_statement(
+             statement, index)
+        return cls(module_path, symbol, importer_fs_path, module_alias,
+                   symbol_alias)
 
     def to_str(self):
         """Returns a string representation of the plausible statement used."""

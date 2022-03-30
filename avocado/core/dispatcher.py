@@ -106,7 +106,8 @@ class VarianterDispatcher(EnabledExtensionManager):
 
     def map_method_with_return_copy(self, method_name, *args, **kwargs):
         """
-        The same as map_method_with_return, but use copy.deepcopy on each passed arg
+        The same as map_method_with_return, but use copy.deepcopy
+        on each passed arg
         """
         return super().map_method_with_return(
             method_name, deepcopy=True, *args, **kwargs)

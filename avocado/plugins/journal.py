@@ -63,7 +63,8 @@ class JournalResult(ResultEvents):
         self.journal = sqlite3.connect(self.journal_path)
         self.journal_cursor = self.journal.cursor()
         for table in SCHEMA:  # pylint: disable=C0206
-            res = self.journal_cursor.execute("PRAGMA table_info('%s')" % table)
+            res = self.journal_cursor.execute(
+                "PRAGMA table_info('%s')" % table)
             if res.fetchone() is None:
                 self.journal_cursor.execute(SCHEMA[table])
         self.journal.commit()
@@ -96,10 +97,9 @@ class JournalResult(ResultEvents):
             status = None
 
         self.journal_cursor.execute(sql,
-                                    (str(state['name']),
-                                     datetime.datetime(1, 1, 1).now().isoformat(),
-                                     action,
-                                     status))
+                                (str(state['name']),
+                                datetime.datetime(1, 1, 1).now().isoformat(),
+                                action, status))
         self.journal.commit()
 
     def pre_tests(self, job):

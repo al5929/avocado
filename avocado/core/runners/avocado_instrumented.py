@@ -94,7 +94,8 @@ class AvocadoInstrumentedTestRunner(nrunner.BaseRunner):
                                                    fail_reason=fail_reason))
         except Exception as e:
             queue.put(messages.StderrMessage.get(traceback.format_exc()))
-            queue.put(messages.FinishedMessage.get('error', fail_reason=str(e)))
+            queue.put(messages.FinishedMessage.get(
+                'error', fail_reason=str(e)))
 
     def run(self):
         yield messages.StartedMessage.get()
@@ -114,8 +115,9 @@ class AvocadoInstrumentedTestRunner(nrunner.BaseRunner):
                 now = time.monotonic()
                 if queue.empty():
                     if most_current_execution_state_time is not None:
-                        next_execution_state_mark = (most_current_execution_state_time +
-                                                     nrunner.RUNNER_RUN_STATUS_INTERVAL)
+                        next_execution_state_mark = (
+                            most_current_execution_state_time +
+                            nrunner.RUNNER_RUN_STATUS_INTERVAL)
                     if (most_current_execution_state_time is None or
                             now > next_execution_state_mark):
                         most_current_execution_state_time = now

@@ -32,9 +32,12 @@ class PreSysInfo:
         """
         self.config = config
         self.queue = queue
-        self.log_packages = self.config.get('sysinfo.collect.installed_packages')
-        self.timeout = self.config.get('sysinfo.collect.commands_timeout')
-        self.locale = self.config.get('sysinfo.collect.locale')
+        self.log_packages = self.config.get(
+            'sysinfo.collect.installed_packages')
+        self.timeout = self.config.get(
+            'sysinfo.collect.commands_timeout')
+        self.locale = self.config.get(
+            'sysinfo.collect.locale')
 
         self.sysinfo_config = sysinfo_config
         self.collectibles = set()
@@ -61,8 +64,9 @@ class PreSysInfo:
         except sysinfo_collectible.CollectibleException as e:
             self.queue.put(messages.LogMessage.get(e.args[0]))
         except Exception as exc:  # pylint: disable=W0703
-            self.queue.put(messages.StderrMessage.get("Collection %s failed: %s"
-                                                      % (type(log_hook), exc)))
+            self.queue.put(messages.StderrMessage.get(
+                "Collection %s failed: %s"
+                 % (type(log_hook), exc)))
 
     def collect(self):
         """Log all collectibles at the start of the event."""
@@ -108,7 +112,8 @@ class PostSysInfo(PreSysInfo):
                                                 locale=self.locale))
 
             for fail_filename in self.sysinfo_config.get("fail_files", []):
-                self.collectibles.add(sysinfo_collectible.Logfile(fail_filename))
+                self.collectibles.add(
+                    sysinfo_collectible.Logfile(fail_filename))
 
 
 class SysinfoRunner(nrunner.BaseRunner):
@@ -155,8 +160,9 @@ class SysinfoRunner(nrunner.BaseRunner):
                 now = time.monotonic()
                 if queue.empty():
                     if most_current_execution_state_time is not None:
-                        next_execution_state_mark = (most_current_execution_state_time +
-                                                     nrunner.RUNNER_RUN_STATUS_INTERVAL)
+                        next_execution_state_mark = (
+                            most_current_execution_state_time +
+                            nrunner.RUNNER_RUN_STATUS_INTERVAL)
                     if (most_current_execution_state_time is None or
                             now > next_execution_state_mark):
                         most_current_execution_state_time = now

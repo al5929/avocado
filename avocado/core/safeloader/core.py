@@ -231,7 +231,8 @@ def _examine_class(target_module, target_class, determine_match, path,
         parents = klass.bases
 
         match = _examine_same_module(parents, info, disabled, match, module,
-                                     target_module, target_class, determine_match)
+                                     target_module,
+                                     target_class, determine_match)
 
         # If there are parents left to be discovered, they
         # might be in a different module.
@@ -239,10 +240,11 @@ def _examine_class(target_module, target_class, determine_match, path,
             try:
                 (parent_class,
                  imported_symbol,
-                 symbol_is_module) = _get_attributes_for_further_examination(parent,
-                                                                             module)
+                 symbol_is_module) = _get_attributes_for_further_examination(
+                     parent, module)
 
-                found_spec = imported_symbol.get_importable_spec(symbol_is_module)
+                found_spec = imported_symbol.get_importable_spec(
+                    symbol_is_module)
                 if found_spec is None:
                     continue
 
@@ -350,7 +352,8 @@ def find_python_tests(target_module, target_class, determine_match, path):
         parents = klass.bases
 
         match = _examine_same_module(parents, info, disabled, match, module,
-                                     target_module, target_class, determine_match)
+                                     target_module, target_class,
+                                     determine_match)
 
         # If there are parents left to be discovered, they
         # might be in a different module.
@@ -358,10 +361,11 @@ def find_python_tests(target_module, target_class, determine_match, path):
             try:
                 (parent_class,
                  imported_symbol,
-                 symbol_is_module) = _get_attributes_for_further_examination(parent,
-                                                                             module)
+                 symbol_is_module) = _get_attributes_for_further_examination(
+                     parent, module)
 
-                found_spec = imported_symbol.get_importable_spec(symbol_is_module)
+                found_spec = imported_symbol.get_importable_spec(
+                    symbol_is_module)
                 if found_spec is None:
                     continue
 
