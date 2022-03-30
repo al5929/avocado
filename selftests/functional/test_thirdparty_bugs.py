@@ -38,20 +38,19 @@ class TestThirdPartyBugs(unittest.TestCase):
     def test_inspektor_indent_bug(self):
         # https://github.com/avocado-framework/inspektor/issues/31
         # Inspektor indent will poke inside a Python string and change its
-        # content.  This happened while writing
-        # selftests/unit/test_utils_cpu.py with content from /proc/cpuinfo.
-        # Right now the indent check is disabled on that file
+        # content.  This happened while writing selftests/unit/test_utils_cpu.py
+        # with content from /proc/cpuinfo.  Right now the indent check is disabled
+        # on that file
         try:
             issue_url = 'https://api.github.com/repos/avocado-framework/inspektor/issues/31'
             content = get_content_by_encoding(issue_url)
         except URLError as details:
             raise unittest.SkipTest(details)
         issue = json.loads(content)
-        self.assertEqual(issue['state'], 'open', 'The issue %s is not open '
-                    'anymore. Please double check and, if already fixed, '
-                    'remove the selftests/unit/test_utils_cpu.py from '
-                    'the exclusion list in selftests/inspekt-indent.sh ' %
-                    'https://github.com/avocado-framework/inspektor/issues/31')
+        self.assertEqual(issue['state'], 'open', 'The issue {issue_url} is not open '
+                         'anymore. Please double check and, if already fixed, '
+                         'remove the selftests/unit/test_utils_cpu.py from '
+                         'the exclusion list in selftests/inspekt-indent.sh ')
 
 
 if __name__ == '__main__':

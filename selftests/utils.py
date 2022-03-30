@@ -12,7 +12,7 @@ BASEDIR = os.path.abspath(os.path.join(BASEDIR, os.path.pardir))
 
 #: The name of the avocado test runner entry point
 AVOCADO = os.environ.get("UNITTEST_AVOCADO_CMD",
-                         "%s -m avocado" % sys.executable)
+                         f"{sys.executable} -m avocado")
 
 
 def python_module_available(module_name):
@@ -50,7 +50,7 @@ def temp_dir_prefix(klass):
     """
     Returns a standard name for the temp dir prefix used by the tests
     """
-    return 'avocado_%s_' % klass.__class__.__name__
+    return f'avocado_{klass.__class__.__name__}_'
 
 
 def get_temporary_config(klass):
@@ -78,16 +78,14 @@ def get_temporary_config(klass):
                      'data_dir = %(data_dir)s\n'
                      'cache_dirs = ["%(cache_dir)s"]\n'
                      'logs_dir = %(logs_dir)s\n') % mapping
-    config_file = tempfile.NamedTemporaryFile('w', dir=base_dir.name,
-        delete=False)
+    config_file = tempfile.NamedTemporaryFile('w', dir=base_dir.name, delete=False)
     config_file.write(temp_settings)
     config_file.close()
     return base_dir, mapping, config_file
 
 
 #: The plugin module names and directories under optional_plugins
-PLUGINS = {'varianter_yaml_to_mux':
-           'avocado-framework-plugin-varianter-yaml-to-mux',
+PLUGINS = {'varianter_yaml_to_mux': 'avocado-framework-plugin-varianter-yaml-to-mux',
            'runner_remote': 'avocado-framework-plugin-runner-remote',
            'runner_vm': 'avocado-framework-plugin-runner-vm',
            'varianter_cit': 'avocado-framework-plugin-varianter-cit',
@@ -128,16 +126,15 @@ def test_suite(base_selftests=True, plugin_selftests=None):
 
 
 def skipOnLevelsInferiorThan(level):
-    return unittest.skipIf(int(os.environ.get(
-                           "AVOCADO_CHECK_LEVEL", 0)) < level,
+    return unittest.skipIf(int(os.environ.get("AVOCADO_CHECK_LEVEL", 0)) < level,
                            "Skipping test that take a long time to run, are "
                            "resource intensive or time sensitive")
 
 
 def skipUnlessPathExists(path):
     return unittest.skipUnless(os.path.exists(path),
-                            ('File or directory at path "%s" used in test is'
-                            ' not available in the system' % path))
+                               (f'File or directory at path "{path}" '
+                               f'used in test is not available in the system'))
 
 
 class TestCaseTmpDir(unittest.TestCase):
